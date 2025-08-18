@@ -1,5 +1,10 @@
 import { GameService } from "../services/gameService.js";
 
+/**
+ * Displays the player's cards in the designated DOM elements.
+ * Shows visible cards and hides empty card slots while maintaining their layout space.
+ * @param {GameService} gameService - The service managing the game state
+ */
 const displayPlayerCards = (gameService) => {
   const playerCards = gameService.getPlayerCards();
   playerCards.forEach((card, index) => {

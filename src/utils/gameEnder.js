@@ -1,5 +1,14 @@
 import { showMessage } from "./chronometer.js";
 
+/**
+ * Ends the game and displays the final message.
+ * @param {Object} gameStatus - The status of the game at the end.
+ * @param {boolean} gameStatus.win - Indicates if the player won the game.
+ * @param {string} gameStatus.message - The message to display at the end of the game.
+ * @param {number} gameStatus.time - The time taken to complete the game.
+ * @param {number} gameStatus.score - The final score of the player.
+ *
+ */
 const endGame = (gameStatus) => {
   showMessage(gameStatus.message, !gameStatus.win);
 

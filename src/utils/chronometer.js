@@ -1,3 +1,9 @@
+/**
+ * Displays a message in the game message area with appropriate styling.
+ * The message automatically disappears after 10 seconds.
+ * @param {string} message - The message to display
+ * @param {boolean} [isError=false] - Whether the message is an error (affects styling)
+ */
 const showMessage = (message, isError = false) => {
   const messageElement = document.getElementById("game-message");
   if (messageElement) {

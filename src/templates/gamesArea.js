@@ -1,3 +1,8 @@
+/**
+ * Creates and returns the HTML template for the game area.
+ * Includes timer, score display, computer card area, player cards, and game controls.
+ * @returns {string} - The HTML template string for the game interface
+ */
 export function createGameTemplate() {
   return `
       <div id="game-area" class="game-area">

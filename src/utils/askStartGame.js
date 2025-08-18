@@ -1,3 +1,8 @@
+/**
+ * Creates and displays the start game interface in the provided DOM element.
+ * Shows a welcome message and a button to start the game.
+ * @param {HTMLElement} domElement - The DOM element where the start game template will be inserted
+ */
 export default function askStartGame(domElement) {
   const template = `
         <div class="card">

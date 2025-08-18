@@ -2,6 +2,13 @@ import { showMessage } from "./chronometer.js";
 import { displayComputerCard } from "./displayComputerCard.js";
 import { updateDisplay } from "./displayUpdater.js";
 
+/**
+ * Sets up event listeners for player cards and the pass button.
+ * Handles card clicks, updates the display, and checks for game end conditions.
+ * @param {GameService} gameService
+ * @param {function} endGameCallback
+ * 
+ */
 const setupEventListeners = (gameService, endGameCallback) => {
   // Event listeners pour les cartes du joueur
   const playerCards = document.querySelectorAll(".player-card-item");
