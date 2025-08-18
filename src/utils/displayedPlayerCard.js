@@ -1,0 +1,25 @@
+import { GameService } from "../services/gameService.js";
+
+const displayPlayerCards = (gameService) => {
+  const playerCards = gameService.getPlayerCards();
+  playerCards.forEach((card, index) => {
+    const cardElement = document.getElementById(`player-card-${index + 1}`);
+    if (cardElement) {
+      cardElement.textContent = card;
+      cardElement.dataset.cardValue = card;
+      cardElement.style.display = "flex";
+      cardElement.style.visibility = "visible";
+    }
+  });
+
+  // Masquer les cartes vides en gardant leur espace
+  for (let i = playerCards.length; i < 5; i++) {
+    const cardElement = document.getElementById(`player-card-${i + 1}`);
+    if (cardElement) {
+      cardElement.style.visibility = "hidden";
+      cardElement.style.display = "flex"; // Garder l'espace
+    }
+  }
+};
+
+export { displayPlayerCards };
