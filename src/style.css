@@ -19,3 +19,47 @@ button {
 .card{
   @apply bg-white shadow-md rounded-lg p-6 max-w-sm w-full flex flex-col items-center gap-2.5 justify-between;
 }
+
+.game-area{
+  @apply flex flex-col mx-auto h-screen p-4;
+}
+
+.game_card{
+  @apply bg-gray-500 min-h-40 min-w-32 max-w-32 border-2 border-gray-700 rounded-lg shadow-lg flex items-center justify-center text-white text-2xl font-bold cursor-pointer;
+}
+
+.player__card{
+  @apply flex justify-around items-center gap-10;
+}
+
+.btn-pass{
+  @apply  absolute right-10 top-1/2
+}
+
+.computer{
+  @apply flex justify-center mt-5
+}
+
+.menu{
+  @apply mt-10 mb-10
+}
+
+
+/* Styles pour les cartes interactives */
+.player-card-item:hover {
+  @apply bg-gray-400 transition-colors;
+}
+
+.player-card-item:active {
+  @apply bg-gray-600 ;
+}
+
+/* Animation pour les messages */
+#game-message {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Style pour le bouton passer désactivé */
+.btn-pass:disabled {
+  @apply bg-gray-400 cursor-not-allowed opacity-50;
+}
