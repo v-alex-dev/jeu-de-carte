@@ -96,6 +96,29 @@ export class GameService {
   }
 
   /**
+   * Handles a player's card drop on the drop zone (drag and drop functionality).
+   * @param {number} selectedCard - The card value dropped by the player
+   * @returns {Object} - Result object with 'correct' boolean and 'message' string
+   */
+  handleCardDrop(selectedCard) {
+    if (!this.isGameRunning)
+      return { correct: false, message: "Jeu non actif" };
+
+    if (this.checkPlayerCard(selectedCard)) {
+      // Bonne réponse
+      this.score++;
+      this.removePlayerCard(selectedCard);
+      return { correct: true, message: "Bonne réponse!" };
+    } else {
+      // Mauvaise réponse
+      if (this.score > 0) {
+        this.score--;
+      }
+      return { correct: false, message: "Mauvaise réponse!" };
+    }
+  }
+
+  /**
    * Removes a specific card from the player's hand.
    * @param {number} card - The card value to remove from the player's cards
    */

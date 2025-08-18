@@ -19,6 +19,9 @@ export function createGameTemplate() {
         </div>
         <div class="menu" id="menu">
           <div class="flex w-full justify-center relative">
+            <div id="drop-zone" class="drop-zone">
+              <span>Glissez votre carte ici</span>
+            </div>
             <button class="btn-pass" id="btn-pass">Passer</button>
           </div>
         </div>

@@ -25,7 +25,7 @@ button {
 }
 
 .game_card{
-  @apply bg-gray-500 min-h-40 min-w-32 max-w-32 border-2 border-gray-700 rounded-lg shadow-lg flex items-center justify-center text-white text-2xl font-bold cursor-pointer;
+  @apply bg-gray-700 min-h-40 min-w-32 max-w-32 border-2 border-gray-800 rounded-lg shadow-lg flex items-center justify-center text-white text-2xl font-bold cursor-pointer;
 }
 
 .player__card{
@@ -47,11 +47,11 @@ button {
 
 /* Styles pour les cartes interactives */
 .player-card-item:hover {
-  @apply bg-gray-400 transition-colors;
+  @apply bg-gray-600 transition-colors;
 }
 
 .player-card-item:active {
-  @apply bg-gray-600 ;
+  @apply bg-gray-800 ;
 }
 
 /* Animation pour les messages */
@@ -62,4 +62,25 @@ button {
 /* Style pour le bouton passer désactivé */
 .btn-pass:disabled {
   @apply bg-gray-400 cursor-not-allowed opacity-50;
+}
+
+/* Styles pour le drag and drop */
+.drop-zone {
+  @apply bg-blue-50 border-2 border-dashed border-blue-400 rounded-lg p-8 min-h-32 min-w-48 flex items-center justify-center text-blue-900 font-semibold transition-all duration-300;
+}
+
+.drop-zone.drag-over {
+  @apply bg-blue-200 border-blue-600 text-slate-900;
+}
+
+.player-card-item.dragging {
+  @apply opacity-50 scale-105;
+}
+
+.player-card-item {
+  @apply transition-all duration-200 cursor-grab;
+}
+
+.player-card-item:active {
+  @apply cursor-grabbing;     
 }

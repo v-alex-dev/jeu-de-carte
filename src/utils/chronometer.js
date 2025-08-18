@@ -9,7 +9,7 @@ const showMessage = (message, isError = false) => {
   if (messageElement) {
     messageElement.textContent = message;
     messageElement.className = `text-center mt-4 text-lg font-bold ${
-      isError ? "text-red-500" : "text-green-500"
+      isError ? "text-red-700" : "text-green-800"
     }`;
 
     // Effacer le message après 5 secondes
