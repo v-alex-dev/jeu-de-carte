@@ -1,6 +1,10 @@
 import "./style.css";
 import askStartGame from "./utils/askStartGame";
 import { GameService } from "./services/gameService";
+import { displayPlayerCards } from "./utils/displayedPlayerCard";
+import { displayComputerCard } from "./utils/displayComputerCard";
+import { showMessage } from "./utils/chronometer";
+import { createGameTemplate } from "./templates/gamesArea";
 
 const app = document.getElementById("app");
 if (!app) {
@@ -10,39 +14,6 @@ if (!app) {
 const gameService = new GameService();
 
 askStartGame(app);
-
-function createGameTemplate() {
-  return `
-      <div id="game-area" class="game-area">
-        <div class="b-10 flex justify-center items-center">
-          <h2 id="timer">Niveau 1 - <span id="time-display">00:30</span></h2>
-          <div class="ml-4">
-            <span class="font-bold">Score: <span id="score-display">0</span></span>
-          </div>
-        </div>
-        <div class="computer" id="computer">
-          <div class="game_card flex items-center justify-center text-white text-2xl font-bold" id="computer-card">
-            ?
-          </div>
-        </div>
-        <div class="menu" id="menu">
-          <div class="flex w-full justify-center relative">
-            <button class="btn-pass" id="btn-pass">Passer</button>
-          </div>
-        </div>
-        <div id="player">
-          <div class="player__card" id="player-card">
-            <div class="game_card player-card-item" id="player-card-1"></div>
-            <div class="game_card player-card-item" id="player-card-2"></div>
-            <div class="game_card player-card-item" id="player-card-3"></div>
-            <div class="game_card player-card-item" id="player-card-4"></div>
-            <div class="game_card player-card-item" id="player-card-5"></div>
-          </div>
-        </div>
-        <div id="game-message" class="text-center mt-4 text-lg font-bold"></div>
-      </div>
-      `;
-}
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -65,59 +36,14 @@ function updateDisplay() {
   }
 }
 
-function displayPlayerCards() {
-  const playerCards = gameService.getPlayerCards();
-  playerCards.forEach((card, index) => {
-    const cardElement = document.getElementById(`player-card-${index + 1}`);
-    if (cardElement) {
-      cardElement.textContent = card;
-      cardElement.dataset.cardValue = card;
-      cardElement.style.display = "flex";
-      cardElement.style.visibility = "visible";
-    }
-  });
-
-  // Masquer les cartes vides en gardant leur espace
-  for (let i = playerCards.length; i < 5; i++) {
-    const cardElement = document.getElementById(`player-card-${i + 1}`);
-    if (cardElement) {
-      cardElement.style.visibility = "hidden";
-      cardElement.style.display = "flex"; // Garder l'espace
-    }
-  }
-}
-
-function displayComputerCard() {
-  const computerCard = gameService.getCurrentComputerCard();
-  const computerCardElement = document.getElementById("computer-card");
-  if (computerCardElement && computerCard) {
-    computerCardElement.textContent = computerCard;
-  }
-}
-
-function showMessage(message, isError = false) {
-  const messageElement = document.getElementById("game-message");
-  if (messageElement) {
-    messageElement.textContent = message;
-    messageElement.className = `text-center mt-4 text-lg font-bold ${
-      isError ? "text-red-500" : "text-green-500"
-    }`;
-
-    // Effacer le message après 5 secondes
-    setTimeout(() => {
-      messageElement.textContent = "";
-    }, 5000);
-  }
-}
-
 function initializeGame() {
   // Générer les cartes du joueur
   gameService.generatePlayerCards();
-  displayPlayerCards();
+  displayPlayerCards(gameService);
 
   // Générer la première carte de l'ordinateur
   gameService.generateComputerCard();
-  displayComputerCard();
+  displayComputerCard(gameService);
 
   // Démarrer le timer
   gameService.startTimer(
@@ -163,7 +89,7 @@ function setupEventListeners() {
         // Générer une nouvelle carte ordinateur
         const newComputerCard = gameService.generateComputerCard();
         if (newComputerCard) {
-          displayComputerCard();
+          displayComputerCard(gameService);
         }
       } else {
         showMessage(result.message, true);
@@ -187,7 +113,7 @@ function setupEventListeners() {
 
       const newComputerCard = gameService.generateComputerCard();
       if (newComputerCard) {
-        displayComputerCard();
+        displayComputerCard(gameService);
       } else {
         // Plus de cartes disponibles pour l'ordinateur
         const gameStatus = gameService.checkGameEnd();
