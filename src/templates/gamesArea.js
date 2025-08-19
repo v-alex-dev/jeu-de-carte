@@ -7,7 +7,7 @@ export function createGameTemplate() {
   return `
       <div id="game-area" class="game-area">
         <div class="b-10 flex justify-center items-center">
-          <h2 id="timer">Niveau 1 - <span id="time-display">00:30</span></h2>
+          <h2 id="timer">Niveau<span id="level"> 1 </span>  - <span id="time-display">00:30</span></h2>
           <div class="ml-4">
             <span class="font-bold">Score: <span id="score-display">0</span></span>
           </div>
