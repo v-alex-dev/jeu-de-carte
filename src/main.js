@@ -17,8 +17,16 @@ let gameService = new GameService();
  * Starts a new game session
  */
 function startNewGame() {
-  gameService = new GameService(); // Create a fresh game service
+  console.log("Starting new game"); // Debug log
+  gameService.resetGame(); // Reset existing game service instead of creating new one
   app.innerHTML = createGameTemplate();
+
+  // Réactiver le bouton passer après avoir créé le template
+  const passButton = document.getElementById("btn-pass");
+  if (passButton) {
+    passButton.disabled = false;
+  }
+
   initializeGame(gameService, (gameStatus, gameServiceInstance) =>
     endGame(gameStatus, gameServiceInstance, restartGame)
   );
@@ -31,6 +39,7 @@ function startNewGame() {
  * Restarts the game by resetting everything and starting fresh
  */
 function restartGame() {
+  console.log("restartGame function called"); // Debug log
   startNewGame();
 }
 

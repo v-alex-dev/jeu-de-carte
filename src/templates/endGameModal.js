@@ -74,9 +74,13 @@ export function showEndGameModal(isWin, finalScore, level, onRestart) {
 
   // Restart game when clicking restart button
   restartBtn.addEventListener("click", () => {
+    console.log("Restart button clicked"); // Debug log
     hideEndGameModal();
     if (onRestart && typeof onRestart === "function") {
+      console.log("Calling restart function"); // Debug log
       onRestart();
+    } else {
+      console.error("onRestart is not a function:", onRestart); // Debug log
     }
   });
 
