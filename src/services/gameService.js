@@ -14,6 +14,7 @@ export class GameService {
     this.timeLeft = 30;
     this.gameTimer = null;
     this.isGameRunning = false;
+    this.level = 1;
   }
 
   /**
@@ -21,7 +22,6 @@ export class GameService {
    * Cards are sorted in ascending order.
    * @returns {number[]} - Array of 5 unique card values sorted in ascending order
    */
-  // Génère 5 cartes aléatoires différentes entre 1 et 10
   generatePlayerCards() {
     const cards = [];
     while (cards.length < 5) {
@@ -30,16 +30,20 @@ export class GameService {
         cards.push(randomCard);
       }
     }
-    // Tri croissant
-    this.playerCards = cards.sort((a, b) => a - b);
-    return this.playerCards;
+    // Sort the cards in ascending order
+    if (this.level !== 1) {
+      this.playerCards = cards.sort((a, b) => a - b);
+      return this.playerCards;
+    }
+
+
   }
 
   /**
    * Generates a new computer card that hasn't been used yet.
    * @returns {number|null} - The generated card value (1-10) or null if no cards are available
    */
-  // Génère une carte pour l'ordinateur (différente des cartes déjà utilisées)
+  // Generates a card for the computer (different from the cards already used)
   generateComputerCard() {
     const availableCards = [];
     for (let i = 1; i <= 10; i++) {
@@ -49,7 +53,7 @@ export class GameService {
     }
 
     if (availableCards.length === 0) {
-      return null; // Plus de cartes disponibles
+      return null; // No more available cards
     }
 
     const randomIndex = Math.floor(Math.random() * availableCards.length);
@@ -64,7 +68,7 @@ export class GameService {
    * @param {number} selectedCard - The card value selected by the player
    * @returns {boolean} - True if the player has the card and it matches the computer card
    */
-  // Vérifie si le joueur a la carte
+  // Checks if the player has the card
   checkPlayerCard(selectedCard) {
     return (
       this.playerCards.includes(selectedCard) &&
@@ -77,17 +81,17 @@ export class GameService {
    * @param {number} selectedCard - The card value selected by the player
    * @returns {Object} - Result object with 'correct' boolean and 'message' string
    */
-  // Gère le clic sur une carte du joueur
+  // Handles the click on a player's card
   handleCardClick(selectedCard) {
     if (!this.isGameRunning) return false;
 
     if (this.checkPlayerCard(selectedCard)) {
-      // Bonne réponse
+      // Correct answer
       this.score++;
       this.removePlayerCard(selectedCard);
       return { correct: true, message: "Bonne réponse!" };
     } else {
-      // Mauvaise réponse
+      // Bad answer
       if (this.score > 0) {
         this.score--;
       }
@@ -105,12 +109,12 @@ export class GameService {
       return { correct: false, message: "Jeu non actif" };
 
     if (this.checkPlayerCard(selectedCard)) {
-      // Bonne réponse
+      // Correct answer
       this.score++;
       this.removePlayerCard(selectedCard);
       return { correct: true, message: "Bonne réponse!" };
     } else {
-      // Mauvaise réponse
+      // Bad answer
       if (this.score > 0) {
         this.score--;
       }
@@ -122,7 +126,7 @@ export class GameService {
    * Removes a specific card from the player's hand.
    * @param {number} card - The card value to remove from the player's cards
    */
-  // Supprime une carte du jeu du joueur
+  // Delete a card from the player's hand
   removePlayerCard(card) {
     this.playerCards = this.playerCards.filter((c) => c !== card);
   }
@@ -131,9 +135,9 @@ export class GameService {
    * Checks if the game should end based on win/lose conditions.
    * @returns {Object} - Game status object with 'ended', 'win', and 'message' properties
    */
-  // Vérifie les conditions de fin de jeu
+  // Checks the end game conditions
   checkGameEnd() {
-    // Victoire : toutes les cartes du joueur trouvées
+    // Victory: all player cards found
     if (this.playerCards.length === 0) {
       return {
         ended: true,
@@ -142,7 +146,7 @@ export class GameService {
       };
     }
 
-    // Défaite : temps écoulé
+    // Defeat: time runs out
     if (this.timeLeft <= 0) {
       return {
         ended: true,
@@ -151,7 +155,7 @@ export class GameService {
       };
     }
 
-    // Défaite : ordinateur a utilisé toutes les cartes
+    // Defeat: computer has used all cards
     if (this.computerUsedCards.length === 10) {
       return {
         ended: true,
@@ -168,7 +172,7 @@ export class GameService {
    * @param {function} onTimerUpdate - Callback function called every second with remaining time
    * @param {function} onGameEnd - Callback function called when the game ends
    */
-  // Démarre le timer
+  // Starts the timer
   startTimer(onTimerUpdate, onGameEnd) {
     this.isGameRunning = true;
     this.gameTimer = setInterval(() => {
@@ -186,7 +190,7 @@ export class GameService {
   /**
    * Stops the game timer and marks the game as not running.
    */
-  // Arrête le timer
+  // Stops the timer
   stopTimer() {
     this.isGameRunning = false;
     if (this.gameTimer) {
@@ -199,7 +203,7 @@ export class GameService {
    * Resets the game to its initial state.
    * Stops the timer and clears all game data.
    */
-  // Remet le jeu à zéro
+  // Resets the game to its initial state
   resetGame() {
     this.stopTimer();
     this.playerCards = [];
@@ -208,6 +212,10 @@ export class GameService {
     this.score = 0;
     this.timeLeft = 30;
     this.isGameRunning = false;
+  }
+
+  levelUp() {
+    this.level++;
   }
 
   // Getters
