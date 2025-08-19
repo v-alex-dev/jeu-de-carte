@@ -11,9 +11,11 @@ const displayPlayerCards = (gameService) => {
     const cardElement = document.getElementById(`player-card-${index + 1}`);
     if (cardElement) {
       cardElement.textContent = card;
-      cardElement.dataset.cardValue = card;
+      cardElement.dataset.cardValue = card.toString(); // S'assurer que c'est une string
       cardElement.style.display = "flex";
       cardElement.style.visibility = "visible";
+      cardElement.style.pointerEvents = "auto"; // Réactiver les interactions
+      cardElement.draggable = true; // S'assurer que c'est draggable
     }
   });
 
@@ -23,6 +25,8 @@ const displayPlayerCards = (gameService) => {
     if (cardElement) {
       cardElement.style.visibility = "hidden";
       cardElement.style.display = "flex"; // Garder l'espace
+      cardElement.style.pointerEvents = "none"; // Désactiver les interactions
+      cardElement.draggable = false;
     }
   }
 };
