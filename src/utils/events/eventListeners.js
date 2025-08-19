@@ -1,7 +1,7 @@
-import { showMessage } from "./chronometer.js";
-import { displayComputerCard } from "./displayComputerCard.js";
-import { updateDisplay } from "./displayUpdater.js";
-import { setupDragAndDrop } from "./dragAndDrop.js";
+import { showMessage } from "../ui/chronometer.js";
+import { displayComputerCard } from "../display/displayComputerCard.js";
+import { updateDisplay } from "../display/displayUpdater.js";
+import { setupDragAndDrop } from "../dragAndDrop/dragAndDrop.js";
 
 /**
  * Sets up event listeners for the pass button and drag and drop functionality.

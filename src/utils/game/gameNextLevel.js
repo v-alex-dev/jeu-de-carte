@@ -1,7 +1,7 @@
-import { displayPlayerCards } from "./displayedPlayerCard.js";
-import { displayComputerCard } from "./displayComputerCard.js";
-import { updateDisplay } from "./displayUpdater.js";
-import { setupDragAndDrop } from "./dragAndDrop.js";
+import { displayPlayerCards } from "../display/displayedPlayerCard.js";
+import { displayComputerCard } from "../display/displayComputerCard.js";
+import { updateDisplay } from "../display/displayUpdater.js";
+import { setupDragAndDrop } from "../dragAndDrop/dragAndDrop.js";
 
 /**
  * Gère le passage au niveau suivant

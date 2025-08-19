@@ -1,4 +1,4 @@
-import { GameService } from "../services/gameService.js";
+import { GameService } from "../../services/gameService.js";
 
 /**
  * Displays the player's cards in the designated DOM elements.

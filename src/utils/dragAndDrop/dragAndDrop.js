@@ -1,6 +1,6 @@
-import { showMessage } from "./chronometer.js";
-import { displayComputerCard } from "./displayComputerCard.js";
-import { updateDisplay } from "./displayUpdater.js";
+import { showMessage } from "../ui/chronometer.js";
+import { displayComputerCard } from "../display/displayComputerCard.js";
+import { updateDisplay } from "../display/displayUpdater.js";
 
 /**
  * Sets up drag and drop functionality for player cards.
@@ -109,27 +109,51 @@ export function setupDragAndDrop(gameService, endGameCallback) {
       draggedCard.style.pointerEvents = "none";
       draggedCard.draggable = false;
 
-      // Generate new computer card
+      // Vérifier d'abord si le joueur a gagné le niveau
+      const gameStatus = gameService.checkGameEnd();
+      if (gameStatus.levelUp) {
+        // Victoire de niveau - pas besoin de générer une nouvelle carte
+        gameService.stopTimer();
+        updateDisplay(gameService);
+        endGameCallback(gameStatus, gameService);
+        return;
+      }
+
+      // Le joueur a encore des cartes, essayer de générer une nouvelle carte ordinateur
       const newComputerCard = gameService.generateComputerCard();
       if (newComputerCard) {
         displayComputerCard(gameService);
+        // Ne pas vérifier la fin de jeu ici - laisser le joueur essayer de jouer la nouvelle carte
+      } else {
+        // L'ordinateur n'a plus de cartes - défaite du joueur
+        const finalGameStatus = gameService.checkGameEnd(true); // Vérifier les cartes seulement quand on n'en a plus
+        if (finalGameStatus.ended) {
+          gameService.stopTimer();
+          updateDisplay(gameService);
+          endGameCallback(finalGameStatus, gameService);
+          return;
+        }
       }
     } else {
       showMessage(result.message, true);
 
-      // Generate new computer card even on wrong answer
+      // Générer une nouvelle carte même en cas de mauvaise réponse
       const newComputerCard = gameService.generateComputerCard();
       if (newComputerCard) {
         displayComputerCard(gameService);
+        // Ne pas vérifier la fin de jeu ici - laisser le joueur essayer de jouer la nouvelle carte
+      } else {
+        // L'ordinateur n'a plus de cartes - défaite du joueur
+        const gameStatus = gameService.checkGameEnd(true); // Vérifier les cartes seulement quand on n'en a plus
+        if (gameStatus.ended) {
+          gameService.stopTimer();
+          updateDisplay(gameService);
+          endGameCallback(gameStatus, gameService);
+          return;
+        }
       }
     }
 
     updateDisplay(gameService);
-
-    // Check if game is ended
-    const gameStatus = gameService.checkGameEnd();
-    if (gameStatus.ended || gameStatus.levelUp) {
-      endGameCallback(gameStatus, gameService);
-    }
   });
 }

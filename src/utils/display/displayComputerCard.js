@@ -1,4 +1,4 @@
-import { GameService } from "../services/gameService.js";
+import { GameService } from "../../services/gameService.js";
 
 /**
  * Displays the current computer card in the designated DOM element.

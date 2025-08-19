@@ -1,6 +1,6 @@
-import { displayPlayerCards } from "./displayedPlayerCard.js";
-import { displayComputerCard } from "./displayComputerCard.js";
-import { updateDisplay } from "./displayUpdater.js";
+import { displayPlayerCards } from "../display/displayedPlayerCard.js";
+import { displayComputerCard } from "../display/displayComputerCard.js";
+import { updateDisplay } from "../display/displayUpdater.js";
 
 /**
  * Initializes the game by setting up player and computer cards,

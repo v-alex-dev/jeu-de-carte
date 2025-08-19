@@ -1,6 +1,6 @@
-import { showMessage } from "./chronometer.js";
-import { displayComputerCard } from "./displayComputerCard.js";
-import { updateDisplay } from "./displayUpdater.js";
+import { showMessage } from "../ui/chronometer.js";
+import { displayComputerCard } from "../display/displayComputerCard.js";
+import { updateDisplay } from "../display/displayUpdater.js";
 
 /**
  * Sets up drag and drop functionality for player cards.
@@ -9,30 +9,41 @@ import { updateDisplay } from "./displayUpdater.js";
  */
 export function setupDragAndDrop(gameService, endGameCallback) {
   const dropZone = document.getElementById("drop-zone");
-  const playerCards = document.querySelectorAll(".player-card-item");
 
   if (!dropZone) {
     console.error("Drop zone not found");
     return;
   }
 
-  // Nettoyer les anciens événements de la drop zone si ils existent
+  // Nettoyer les anciens événements de la drop zone
   const newDropZone = dropZone.cloneNode(true);
   dropZone.parentNode.replaceChild(newDropZone, dropZone);
-  const cleanDropZone = document.getElementById("drop-zone");  // Configure each player card for dragging
+  const cleanDropZone = document.getElementById("drop-zone");
+
+  // Re-configurer toutes les cartes de joueur
+  const playerCards = document.querySelectorAll(".player-card-item");
+
   playerCards.forEach((card) => {
-    // Nettoyer les anciens événements sans cloner (pour garder les data-attributes)
-    const newCard = card.cloneNode(true);
-    // Préserver les data-attributes
-    if (card.dataset.cardValue) {
-      newCard.dataset.cardValue = card.dataset.cardValue;
-    }
-    card.parentNode.replaceChild(newCard, card);
-    
-    // Make card draggable
+    // Supprimer tous les anciens listeners en recréant l'élément
+    const cardValue = card.dataset.cardValue;
+    const cardText = card.textContent;
+    const cardId = card.id;
+    const cardClasses = card.className;
+
+    if (!cardValue) return; // Ignorer les cartes sans valeur
+
+    // Créer une nouvelle carte avec les mêmes propriétés
+    const newCard = document.createElement("div");
+    newCard.id = cardId;
+    newCard.className = cardClasses;
+    newCard.textContent = cardText;
+    newCard.dataset.cardValue = cardValue;
     newCard.draggable = true;
 
-    // Drag start event
+    // Remplacer l'ancienne carte
+    card.parentNode.replaceChild(newCard, card);
+
+    // Ajouter les événements drag
     newCard.addEventListener("dragstart", (e) => {
       if (!gameService.isRunning()) {
         e.preventDefault();
@@ -40,19 +51,14 @@ export function setupDragAndDrop(gameService, endGameCallback) {
       }
 
       newCard.classList.add("dragging");
-      // Store the card value in the dataTransfer
       e.dataTransfer.setData("text/plain", newCard.dataset.cardValue);
       e.dataTransfer.effectAllowed = "move";
     });
 
-    // Drag end event
     newCard.addEventListener("dragend", () => {
       newCard.classList.remove("dragging");
     });
   });
-
-  // Re-sélectionner les nouvelles cartes pour les événements
-  const updatedPlayerCards = document.querySelectorAll(".player-card-item");
 
   // Configure drop zone
   cleanDropZone.addEventListener("dragover", (e) => {
@@ -75,12 +81,20 @@ export function setupDragAndDrop(gameService, endGameCallback) {
     if (!gameService.isRunning()) return;
 
     const cardValue = parseInt(e.dataTransfer.getData("text/plain"));
+
+    // Chercher la carte avec le bon data-card-value
     const draggedCard = document.querySelector(
       `[data-card-value="${cardValue}"]`
     );
 
     if (!draggedCard) {
-      console.error("Dragged card not found");
+      console.error("Dragged card not found, cardValue:", cardValue);
+      // Debug: lister toutes les cartes disponibles
+      const allCards = document.querySelectorAll(".player-card-item");
+      console.log(
+        "Available cards:",
+        Array.from(allCards).map((c) => c.dataset.cardValue)
+      );
       return;
     }
 
@@ -103,7 +117,6 @@ export function setupDragAndDrop(gameService, endGameCallback) {
     } else {
       showMessage(result.message, true);
 
-      // Card returns to its original position automatically (drag failed)
       // Generate new computer card even on wrong answer
       const newComputerCard = gameService.generateComputerCard();
       if (newComputerCard) {

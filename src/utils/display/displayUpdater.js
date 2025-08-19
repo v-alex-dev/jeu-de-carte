@@ -1,5 +1,5 @@
 import { updateLevelDisplay } from "./displayLevel.js";
-import { formatTime } from "./timeFormatter.js";
+import { formatTime } from "../ui/timeFormatter.js";
 /**
  * Updates the display elements for time and score based on the current game state.
  * @param {GameService} gameService - The service managing the game state

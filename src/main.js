@@ -1,10 +1,10 @@
 import "./style.css";
-import askStartGame from "./utils/askStartGame";
+import askStartGame from "./utils/ui/askStartGame";
 import { GameService } from "./services/gameService";
 import { createGameTemplate } from "./templates/gamesArea";
-import { initializeGame } from "./utils/gameInitializer.js";
-import { setupEventListeners } from "./utils/eventListeners.js";
-import { endGame } from "./utils/gameEnder.js";
+import { initializeGame } from "./utils/game/gameInitializer.js";
+import { setupEventListeners } from "./utils/events/eventListeners.js";
+import { endGame } from "./utils/game/gameEnder.js";
 
 const app = document.getElementById("app");
 if (!app) {

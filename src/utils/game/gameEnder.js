@@ -1,4 +1,4 @@
-import { showMessage } from "./chronometer.js";
+import { showMessage } from "../ui/chronometer.js";
 import { gameNextLevel } from "./gameNextLevel.js";
 /**
  * Ends the game and displays the final message.
