@@ -16,7 +16,20 @@ const updateDisplay = (gameService) => {
   if (scoreDisplay) {
     scoreDisplay.textContent = gameService.getScore();
   }
-  levelUpDisplay(gameService);
+
+  // Mettre à jour l'affichage du niveau
+  updateLevelDisplay(gameService);
+
+  // Gérer l'état du bouton "Passer"
+  if (passButton) {
+    if (!gameService.isRunning() || !gameService.canGenerateMoreCards()) {
+      passButton.disabled = true;
+      passButton.textContent = "Plus de cartes";
+    } else {
+      passButton.disabled = false;
+      passButton.textContent = "Passer";
+    }
+  }
 };
 
 export { updateDisplay };
