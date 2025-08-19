@@ -9,64 +9,92 @@ import { updateDisplay } from "./displayUpdater.js";
  */
 export function setupDragAndDrop(gameService, endGameCallback) {
   const dropZone = document.getElementById("drop-zone");
-  const playerCards = document.querySelectorAll(".player-card-item");
 
   if (!dropZone) {
     console.error("Drop zone not found");
     return;
   }
 
-  // Configure each player card for dragging
-  playerCards.forEach((card) => {
-    // Make card draggable
-    card.draggable = true;
+  // Nettoyer les anciens événements de la drop zone
+  const newDropZone = dropZone.cloneNode(true);
+  dropZone.parentNode.replaceChild(newDropZone, dropZone);
+  const cleanDropZone = document.getElementById("drop-zone");
 
-    // Drag start event
-    card.addEventListener("dragstart", (e) => {
+  // Re-configurer toutes les cartes de joueur
+  const playerCards = document.querySelectorAll(".player-card-item");
+
+  playerCards.forEach((card) => {
+    // Supprimer tous les anciens listeners en recréant l'élément
+    const cardValue = card.dataset.cardValue;
+    const cardText = card.textContent;
+    const cardId = card.id;
+    const cardClasses = card.className;
+
+    if (!cardValue) return; // Ignorer les cartes sans valeur
+
+    // Créer une nouvelle carte avec les mêmes propriétés
+    const newCard = document.createElement("div");
+    newCard.id = cardId;
+    newCard.className = cardClasses;
+    newCard.textContent = cardText;
+    newCard.dataset.cardValue = cardValue;
+    newCard.draggable = true;
+
+    // Remplacer l'ancienne carte
+    card.parentNode.replaceChild(newCard, card);
+
+    // Ajouter les événements drag
+    newCard.addEventListener("dragstart", (e) => {
       if (!gameService.isRunning()) {
         e.preventDefault();
         return;
       }
 
-      card.classList.add("dragging");
-      // Store the card value in the dataTransfer
-      e.dataTransfer.setData("text/plain", card.dataset.cardValue);
+      newCard.classList.add("dragging");
+      e.dataTransfer.setData("text/plain", newCard.dataset.cardValue);
       e.dataTransfer.effectAllowed = "move";
     });
 
-    // Drag end event
-    card.addEventListener("dragend", () => {
-      card.classList.remove("dragging");
+    newCard.addEventListener("dragend", () => {
+      newCard.classList.remove("dragging");
     });
   });
 
   // Configure drop zone
-  dropZone.addEventListener("dragover", (e) => {
+  cleanDropZone.addEventListener("dragover", (e) => {
     e.preventDefault(); // Allow drop
     e.dataTransfer.dropEffect = "move";
-    dropZone.classList.add("drag-over");
+    cleanDropZone.classList.add("drag-over");
   });
 
-  dropZone.addEventListener("dragleave", (e) => {
+  cleanDropZone.addEventListener("dragleave", (e) => {
     // Only remove highlight if we're actually leaving the drop zone
-    if (!dropZone.contains(e.relatedTarget)) {
-      dropZone.classList.remove("drag-over");
+    if (!cleanDropZone.contains(e.relatedTarget)) {
+      cleanDropZone.classList.remove("drag-over");
     }
   });
 
-  dropZone.addEventListener("drop", (e) => {
+  cleanDropZone.addEventListener("drop", (e) => {
     e.preventDefault();
-    dropZone.classList.remove("drag-over");
+    cleanDropZone.classList.remove("drag-over");
 
     if (!gameService.isRunning()) return;
 
     const cardValue = parseInt(e.dataTransfer.getData("text/plain"));
+
+    // Chercher la carte avec le bon data-card-value
     const draggedCard = document.querySelector(
       `[data-card-value="${cardValue}"]`
     );
 
     if (!draggedCard) {
-      console.error("Dragged card not found");
+      console.error("Dragged card not found, cardValue:", cardValue);
+      // Debug: lister toutes les cartes disponibles
+      const allCards = document.querySelectorAll(".player-card-item");
+      console.log(
+        "Available cards:",
+        Array.from(allCards).map((c) => c.dataset.cardValue)
+      );
       return;
     }
 
@@ -81,28 +109,51 @@ export function setupDragAndDrop(gameService, endGameCallback) {
       draggedCard.style.pointerEvents = "none";
       draggedCard.draggable = false;
 
-      // Generate new computer card
+      // Vérifier d'abord si le joueur a gagné le niveau
+      const gameStatus = gameService.checkGameEnd();
+      if (gameStatus.levelUp) {
+        // Victoire de niveau - pas besoin de générer une nouvelle carte
+        gameService.stopTimer();
+        updateDisplay(gameService);
+        endGameCallback(gameStatus, gameService);
+        return;
+      }
+
+      // Le joueur a encore des cartes, essayer de générer une nouvelle carte ordinateur
       const newComputerCard = gameService.generateComputerCard();
       if (newComputerCard) {
         displayComputerCard(gameService);
+        // Ne pas vérifier la fin de jeu ici - laisser le joueur essayer de jouer la nouvelle carte
+      } else {
+        // L'ordinateur n'a plus de cartes - défaite du joueur
+        const finalGameStatus = gameService.checkGameEnd(true); // Vérifier les cartes seulement quand on n'en a plus
+        if (finalGameStatus.ended) {
+          gameService.stopTimer();
+          updateDisplay(gameService);
+          endGameCallback(finalGameStatus, gameService);
+          return;
+        }
       }
     } else {
       showMessage(result.message, true);
 
-      // Card returns to its original position automatically (drag failed)
-      // Generate new computer card even on wrong answer
+      // Générer une nouvelle carte même en cas de mauvaise réponse
       const newComputerCard = gameService.generateComputerCard();
       if (newComputerCard) {
         displayComputerCard(gameService);
+        // Ne pas vérifier la fin de jeu ici - laisser le joueur essayer de jouer la nouvelle carte
+      } else {
+        // L'ordinateur n'a plus de cartes - défaite du joueur
+        const gameStatus = gameService.checkGameEnd(true); // Vérifier les cartes seulement quand on n'en a plus
+        if (gameStatus.ended) {
+          gameService.stopTimer();
+          updateDisplay(gameService);
+          endGameCallback(gameStatus, gameService);
+          return;
+        }
       }
     }
 
     updateDisplay(gameService);
-
-    // Check if game is ended
-    const gameStatus = gameService.checkGameEnd();
-    if (gameStatus.ended) {
-      endGameCallback(gameStatus);
-    }
   });
 }
