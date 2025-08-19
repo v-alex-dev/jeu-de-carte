@@ -22,11 +22,16 @@ const setupEventListeners = (gameService, endGameCallback) => {
       const newComputerCard = gameService.generateComputerCard();
       if (newComputerCard) {
         displayComputerCard(gameService);
+        updateDisplay(gameService);
+        // Une nouvelle carte a été générée, le jeu continue
       } else {
         // Plus de cartes disponibles pour l'ordinateur
-        const gameStatus = gameService.checkGameEnd();
+        console.log("Plus de cartes disponibles pour l'ordinateur");
+        // SEULEMENT maintenant vérifier la fin de jeu
+        const gameStatus = gameService.checkGameEnd(true); // Vérifier les cartes seulement après échec de génération
         if (gameStatus.ended) {
-          endGameCallback(gameStatus);
+          console.log("Fin de jeu détectée:", gameStatus);
+          endGameCallback(gameStatus, gameService);
         }
       }
     });
