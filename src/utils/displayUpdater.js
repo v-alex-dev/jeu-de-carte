@@ -1,4 +1,4 @@
-import { levelUpDisplay, updateLevelDisplay } from "./displayLevel.js";
+import { updateLevelDisplay } from "./displayLevel.js";
 import { formatTime } from "./timeFormatter.js";
 /**
  * Updates the display elements for time and score based on the current game state.
