@@ -21,7 +21,7 @@ const initializeGame = (gameService, endGameCallback) => {
   // Démarrer le timer
   gameService.startTimer(
     (timeLeft) => updateDisplay(gameService),
-    (gameStatus) => endGameCallback(gameStatus)
+    (gameStatus) => endGameCallback(gameStatus, gameService)
   );
 
   updateDisplay(gameService);
