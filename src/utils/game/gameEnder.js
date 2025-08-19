@@ -1,5 +1,6 @@
 import { showMessage } from "../ui/chronometer.js";
 import { gameNextLevel } from "./gameNextLevel.js";
+import { showEndGameModal } from "../../templates/endGameModal.js";
 /**
  * Ends the game and displays the final message.
  * @param {Object} gameStatus - The status of the game at the end.
@@ -8,8 +9,9 @@ import { gameNextLevel } from "./gameNextLevel.js";
  * @param {number} gameStatus.time - The time taken to complete the game.
  * @param {number} gameStatus.score - The final score of the player.
  * @param {GameService} gameService - L'instance du service de jeu
+ * @param {Function} onRestart - Callback function to restart the game
  */
-const endGame = (gameStatus, gameService = null) => {
+const endGame = (gameStatus, gameService = null, onRestart = null) => {
   if (gameStatus.levelUp && gameService) {
     showMessage("Niveau supérieur atteint !", false);
     // Attendre un peu avant de passer au niveau suivant
@@ -18,7 +20,6 @@ const endGame = (gameStatus, gameService = null) => {
     }, 2000);
     return;
   }
-  showMessage(gameStatus.message, !gameStatus.win);
 
   // Désactiver les clics sur les cartes
   const playerCards = document.querySelectorAll(".player-card-item");
@@ -32,6 +33,14 @@ const endGame = (gameStatus, gameService = null) => {
   if (passButton) {
     passButton.disabled = true;
   }
+
+  // Afficher le modal de fin de partie
+  const finalScore = gameService
+    ? gameService.getScore()
+    : gameStatus.score || 0;
+  const currentLevel = gameService ? gameService.getLevel() : 1;
+
+  showEndGameModal(gameStatus.win, finalScore, currentLevel, onRestart);
 };
 
 export { endGame };

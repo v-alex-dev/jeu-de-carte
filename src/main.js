@@ -11,18 +11,35 @@ if (!app) {
   console.error("App element not found in the DOM.");
 }
 
-const gameService = new GameService();
+let gameService = new GameService();
+
+/**
+ * Starts a new game session
+ */
+function startNewGame() {
+  gameService = new GameService(); // Create a fresh game service
+  app.innerHTML = createGameTemplate();
+  initializeGame(gameService, (gameStatus, gameServiceInstance) =>
+    endGame(gameStatus, gameServiceInstance, restartGame)
+  );
+  setupEventListeners(gameService, (gameStatus, gameServiceInstance) =>
+    endGame(gameStatus, gameServiceInstance, restartGame)
+  );
+}
+
+/**
+ * Restarts the game by resetting everything and starting fresh
+ */
+function restartGame() {
+  startNewGame();
+}
 
 askStartGame(app);
 
 // Add event listener for the start game button
 const startGameButton = document.getElementById("start-game");
 if (startGameButton) {
-  startGameButton.addEventListener("click", () => {
-    app.innerHTML = createGameTemplate();
-    initializeGame(gameService, endGame);
-    setupEventListeners(gameService, endGame);
-  });
+  startGameButton.addEventListener("click", startNewGame);
 } else {
   console.error("Start game button not found in the DOM.");
 }
