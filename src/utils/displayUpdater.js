@@ -1,3 +1,4 @@
+import { levelUpDisplay, updateLevelDisplay } from "./displayLevel.js";
 import { formatTime } from "./timeFormatter.js";
 /**
  * Updates the display elements for time and score based on the current game state.
@@ -14,6 +15,7 @@ const updateDisplay = (gameService) => {
   if (scoreDisplay) {
     scoreDisplay.textContent = gameService.getScore();
   }
+  levelUpDisplay(gameService);
 };
 
 export { updateDisplay };
