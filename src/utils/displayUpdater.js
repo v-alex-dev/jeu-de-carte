@@ -7,6 +7,7 @@ import { formatTime } from "./timeFormatter.js";
 const updateDisplay = (gameService) => {
   const timeDisplay = document.getElementById("time-display");
   const scoreDisplay = document.getElementById("score-display");
+  const passButton = document.getElementById("btn-pass");
 
   if (timeDisplay) {
     timeDisplay.textContent = formatTime(gameService.getTimeLeft());
