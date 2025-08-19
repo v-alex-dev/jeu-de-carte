@@ -66,7 +66,7 @@ button {
 
 /* Styles pour le drag and drop */
 .drop-zone {
-  @apply bg-blue-50 border-2 border-dashed border-blue-400 rounded-lg p-8 min-h-32 min-w-48 flex items-center justify-center text-blue-900 font-semibold transition-all duration-300;
+  @apply bg-blue-50 border-2 border-dashed border-blue-400 rounded-lg p-12 min-h-40 min-w-80 flex items-center justify-center text-blue-900 font-semibold transition-all duration-300;
 }
 
 .drop-zone.drag-over {
