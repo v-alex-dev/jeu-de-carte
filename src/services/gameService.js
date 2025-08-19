@@ -30,13 +30,15 @@ export class GameService {
         cards.push(randomCard);
       }
     }
-    // Sort the cards in ascending order
-    if (this.level !== 1) {
+    // For level 1 sort the cards in ascending order
+    if (this.level === 1) {
       this.playerCards = cards.sort((a, b) => a - b);
-      return this.playerCards;
+    } else {
+      // For level 2+, keep the cards in random order
+      this.playerCards = cards;
     }
 
-
+    return this.playerCards;
   }
 
   /**
@@ -52,7 +54,17 @@ export class GameService {
       }
     }
 
+    console.log(
+      `Cartes disponibles: ${availableCards.length}/10`,
+      availableCards
+    );
+    console.log(
+      `Cartes utilisées: ${this.computerUsedCards.length}/10`,
+      this.computerUsedCards
+    );
+
     if (availableCards.length === 0) {
+      console.log("Plus de cartes disponibles pour l'ordinateur!");
       return null; // No more available cards
     }
 
@@ -60,6 +72,7 @@ export class GameService {
     this.currentComputerCard = availableCards[randomIndex];
     this.computerUsedCards.push(this.currentComputerCard);
 
+    console.log(`Nouvelle carte ordinateur: ${this.currentComputerCard}`);
     return this.currentComputerCard;
   }
 
@@ -133,17 +146,27 @@ export class GameService {
 
   /**
    * Checks if the game should end based on win/lose conditions.
+   * @param {boolean} checkNoMoreCards - Whether to check if computer has no more cards
    * @returns {Object} - Game status object with 'ended', 'win', and 'message' properties
    */
   // Checks the end game conditions
-  checkGameEnd() {
+  checkGameEnd(checkNoMoreCards = false) {
     // Victory: all player cards found
     if (this.playerCards.length === 0) {
-      return {
-        ended: true,
-        win: true,
-        message: "Félicitations! Vous avez gagné!",
-      };
+      if (this.level < 5) {
+        // NE PAS incrémenter ici, ça sera fait dans passToNextLevel()
+        return {
+          ended: false,
+          levelUp: true,
+          message: `Niveau ${this.level} terminé! Passez au niveau suivant.`,
+        };
+      } else {
+        return {
+          ended: true,
+          win: true,
+          message: "Félicitations! Vous avez gagné le jeu!",
+        };
+      }
     }
 
     // Defeat: time runs out
@@ -155,8 +178,9 @@ export class GameService {
       };
     }
 
-    // Defeat: computer has used all cards
-    if (this.computerUsedCards.length === 10) {
+    // Defeat: computer has used all cards AND can't generate more
+    // Ne vérifier cette condition que si explicitement demandé
+    if (checkNoMoreCards && !this.canGenerateMoreCards()) {
       return {
         ended: true,
         win: false,
@@ -183,6 +207,9 @@ export class GameService {
       if (gameStatus.ended) {
         this.stopTimer();
         onGameEnd(gameStatus);
+      } else if (gameStatus.levelUp) {
+        this.stopTimer();
+        onGameEnd(gameStatus);
       }
     }, 1000);
   }
@@ -199,6 +226,31 @@ export class GameService {
     }
   }
 
+  passToNextLevel(onTimerUpdate, onGameEnd) {
+    // Incrémenter le niveau ICI au bon moment
+    this.levelUp();
+
+    // Réinitialiser le timer à 30 secondes
+    this.timeLeft = 30;
+
+    // Réinitialiser les cartes utilisées par l'ordinateur
+    this.computerUsedCards = [];
+    this.currentComputerCard = null;
+
+    // Générer de nouvelles cartes pour le joueur
+    this.generatePlayerCards();
+
+    // Redémarrer le timer avec les nouvelles conditions
+    this.stopTimer(); // Arrêter l'ancien timer s'il existe
+    this.startTimer(onTimerUpdate, onGameEnd);
+
+    return {
+      level: this.level,
+      score: this.score,
+      timeLeft: this.timeLeft,
+      message: `Niveau ${this.level} ! Nouvelles cartes générées.`,
+    };
+  }
   /**
    * Resets the game to its initial state.
    * Stops the timer and clears all game data.
@@ -214,6 +266,9 @@ export class GameService {
     this.isGameRunning = false;
   }
 
+  /**
+   * Increments the level by 1.
+   */
   levelUp() {
     this.level++;
   }
@@ -257,5 +312,17 @@ export class GameService {
    */
   isRunning() {
     return this.isGameRunning;
+  }
+
+  /**
+   * Checks if the computer can generate more cards.
+   * @returns {boolean} - True if more cards are available, false otherwise
+   */
+  canGenerateMoreCards() {
+    return this.computerUsedCards.length < 10;
+  }
+
+  getLevel() {
+    return this.level;
   }
 }
